@@ -1,0 +1,728 @@
+swagger: '2.0'
+info:
+  description: |
+    This document specifies a **Application Management RESTfulAPI** for **WSO2 Identity Server** .
+  version: 1.0.0
+  title: WSO2 Identity Server Application Management Rest API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: WSO2
+    url: http://wso2.com/products/identity-server/
+    email: architecture@wso2.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+######################################################
+# The fixed parts of the URLs of the API
+######################################################
+
+# The schemes supported by the API
+schemes:
+  - https
+
+# The domain of the API.
+# This is configured by the customer during deployment.
+# The given host is just an example.
+# host: apis.is.com
+
+# The base path of the API.
+# Will be prefixed to all paths.
+# if the tenant domain is carbon.super base path can be /api/identity/sp/v1.0 like this too.
+# basePath: /t/{tenant-domain}/api/identity/sp/v1.0
+
+# The following media types can be passed as input in message bodies of the API.
+# The actual media type must be specified in the Content-Type header field of the request.
+# The default is json, i.e. the Content-Type header is not needed to
+# be set, but supporting it serves extensibility.
+consumes:
+  - application/json
+
+# The following media types may be passed as output in message bodies of the API.
+# The media type(s) consumable by the requester is specified in the Accept header field
+# of the corresponding request.
+# The actual media type returned will be specified in the Content-Type header field
+# of the of the response.
+# The default of the Accept header is json, i.e. there is not needed to
+# set the value, but supporting it serves extensibility.
+produces:
+  - application/json
+
+paths:
+  "/applications":
+    post:
+      description: |
+        This API provides the capability to store the application information provided by users.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Add application
+
+      # post parameters:
+      parameters:
+        -
+          name: application
+          in: body
+          description: This represents the application to be created.
+          required: true
+          schema:
+            $ref: '#/definitions/Application'
+      responses:
+        201:
+          description: Successful response.
+          headers:
+            Location:
+              type: string
+              description: Location of the newly created application.
+          schema:
+            $ref: '#/definitions/Application'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Applications
+    get:
+      description: |
+        This API provides the capability to retrive the list of applications.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        List applications
+
+      # query parameters
+      parameters:
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ApplicationListItem'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Applications
+  "/applications/{applicationId}":
+    put:
+      description: |
+        This API provides the capability to update an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Update an application by id
+
+      # put parameters:
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description:  Id of the application.
+          required: true
+        -
+          name: application
+          in: body
+          description:  This represents the application to be updated.
+          required: true
+          schema:
+            $ref: '#/definitions/Application'
+      responses:
+        200:
+          description: Successful response.
+          headers:
+            Location:
+              type: string
+              description: Location of the updated application
+          schema:
+            $ref: '#/definitions/Application'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Applications
+    get:
+      description: |
+        This API provides the capability to retrive the aplication information by id.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Retrive application by id
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Application'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Applications
+    delete:
+      description: |
+        This API provides the capability to delete an aplication by id.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Delete an application by id
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Applications
+  "/applications/{applicationId}/authentication/protocols/saml2":
+    put:
+      description: |
+        This API provides the capability to store SAML2 authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Update SAML2 authentication protocol parameters.
+
+      # put parameters:
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+        -
+          name: saml2-protocol-attributes
+          in: body
+          description: This represents the SAML2 protocol attributes of the application.
+          required: true
+          schema:
+            $ref: '#/definitions/SAML2Parameters'
+      responses:
+        200:
+          description: Successful response
+          headers:
+            Location:
+              type: string
+              description: Location to the SAML2 authentication protocol attributes.
+          schema:
+            $ref: '#/definitions/SAML2Parameters'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - SAML2 Authentication Protocol
+    get:
+      description: |
+        This API provides the capability to retrive SAML2 authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Retrieve SAML2 authentication protocol parameters
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SAML2Parameters'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - SAML2 Authentication Protocol
+    delete:
+      description: |
+        This API provides the capability to delete SAML2 authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Delete SAML2 authentication protocol parameters
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - SAML2 Authentication Protocol
+  "/applications/{applicationId}/authentication/protocols/oidc":
+    put:
+      description: |
+        This API provides the capability to store OIDC authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Update OIDC authentication protocol parameters
+
+      # put parameters:
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+        -
+          name: parameters
+          in: body
+          description:  This represents the OIDC authentication protocol parameters of an application.
+          required: true
+          schema:
+            $ref: '#/definitions/OIDCParameters'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/OIDCParameters'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        409:
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - OIDC Authentication Protocol
+    get:
+      description: |
+       This API provides the capability to retrieve OIDC authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Retrieve OIDC authentication protocol parameters
+      parameters:
+        -
+          name: applicationId
+          type: 'string'
+          in: path
+          description: Id of the application
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OIDCParameters'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - OIDC Authentication Protocol
+    delete:
+      description: |
+        This API provides the capability to delete OIDC authentication protocol parameters of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Delete OIDC authentication protocol parameters
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - OIDC Authentication Protocol
+  "/applications/{applicationId}/authentication/sequence":
+    put:
+      description: |
+        This API provides the capability to store authentication sequence of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Update authentication sequence of an application
+
+      # put parameters:
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+        -
+          name: identity-providers
+          in: body
+          description: This represents the authnentication sequence of the application.
+          required: true
+          schema:
+            $ref: '#/definitions/AuthenticationSequence'
+      responses:
+        200:
+          description: Successful response.
+          schema:
+            $ref: '#/definitions/AuthenticationSequence'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Authentication Sequence
+    get:
+      description: |
+       This API provides the capability to retrive authentication sequence of an application.
+      x-wso2-request: |
+
+      x-wso2-response: |
+        "HTTP/1.1 200 Ok"
+      summary: |
+        Retrieve authentication sequence of an application
+      parameters:
+        -
+          name: applicationId
+          type: string
+          in: path
+          description: Id of the application.
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AuthenticationSequence'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Authentication Sequence
+
+definitions:
+#-----------------------------------------------------
+# Error Object Definition
+#-----------------------------------------------------
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      description:
+        type: string
+#-----------------------------------------------------
+# Property Object Definition
+#-----------------------------------------------------
+  Property:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+#-----------------------------------------------------
+# Application Object Definition
+#-----------------------------------------------------
+  Application:
+    type: object
+    required:
+      - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      authentication:
+        $ref: '#/definitions/AuthenticationParameters'
+#-----------------------------------------------------
+# Application List Item Object Definition
+#-----------------------------------------------------
+  ApplicationListItem:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+#-----------------------------------------------------
+# Authentication Parameters Object Definition
+#-----------------------------------------------------
+  AuthenticationParameters:
+    type: object
+    properties:
+      protocols:
+        $ref: '#/definitions/AuthenticationProtocols'
+      sequence:
+        $ref: '#/definitions/AuthenticationSequence'
+#-----------------------------------------------------
+# Authentication Protocols Object Definition
+#-----------------------------------------------------
+  AuthenticationProtocols:
+    type: object
+    properties:
+      saml2-parameters:
+        $ref: '#/definitions/SAML2Parameters'
+      oidc-parameters:
+        $ref: '#/definitions/OIDCParameters'
+#-----------------------------------------------------
+# SAML2 Parameters Object Definition
+#-----------------------------------------------------
+  SAML2Parameters:
+    type: object
+#-----------------------------------------------------
+# OIDC Parameters Object Definition
+#-----------------------------------------------------
+  OIDCParameters:
+    type: object
+#-----------------------------------------------------
+# Identity Providers Object Definition
+#-----------------------------------------------------
+  AuthenticationSequence:
+    type: object
+#-----------------------------------------------------
+
+#-----------------------------------------------------
+# Parameters
+#-----------------------------------------------------
+parameters:
+#-----------------------------------------------------
+# The Limit of the Search Result
+#-----------------------------------------------------
+  limit:
+    name: limit
+    in: query
+    description: Number of search results.
+    required: false
+    type: integer
+#-----------------------------------------------------
+# The Start Index of the Search Result
+#-----------------------------------------------------
+  offset:
+    name: offset
+    in: query
+    description: Start index of the search.
+    required: false
+    type: integer
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+# basePath: /t/{tenant-domain}/api/identity/application-mgt/v1.0
+# Added by API Auto Mocking Plugin
+basePath: /t/{tenant-domain}/api/identity/application-mgt/v1.0
