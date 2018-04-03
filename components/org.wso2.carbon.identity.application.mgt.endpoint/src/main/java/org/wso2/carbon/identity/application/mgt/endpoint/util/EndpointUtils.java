@@ -84,19 +84,23 @@ public class EndpointUtils {
     public static int getServiceProviderId(String applicationId)
             throws EndpointClientException {
 
+        String extractedId = extractedApplicationId(applicationId);
+        if (StringUtils.isNumeric(extractedId)) {
+            return Integer.valueOf(extractedId);
+        }
+
+        return FILE_BASED_APPLICATION_ID;
+    }
+
+    public static String extractedApplicationId(String applicationId) throws EndpointClientException {
+
         String decodedId = new String(base58Decode(applicationId));
         if (StringUtils.isBlank(decodedId) || !decodedId.startsWith(UNIQUE_ID_PREFIX)) {
             throw new EndpointClientException("Invalid application id.");
         }
 
         // Unique id format is APPLICATION.{application id or application name}
-        decodedId = decodedId.replaceFirst("^" + UNIQUE_ID_PREFIX, "");
-
-        if (StringUtils.isNumeric(decodedId)) {
-            return Integer.valueOf(decodedId);
-        }
-
-        return FILE_BASED_APPLICATION_ID;
+        return decodedId.replaceFirst("^" + UNIQUE_ID_PREFIX, "");
     }
 
     public static Response getInternalServerErrorResponse() {

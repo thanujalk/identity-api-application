@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.identity.application.mgt.endpoint.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
@@ -100,7 +101,45 @@ public class ApplicationsApiServiceImpl extends ApplicationsApiService {
     @Override
     public Response applicationsApplicationIdGet(String applicationId) {
 
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Not implemented!")).build();
+        String extractedApplicationId;
+        try {
+            extractedApplicationId = EndpointUtils.extractedApplicationId(applicationId);
+        } catch (EndpointClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        }
+
+        ApplicationManagementBridgeService service;
+        try {
+            service = EndpointUtils.getApplicationManagementRESTService();
+        } catch (EndpointServerException e) {
+            LOG.error("Server error occurred.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        ExtendedServiceProvider serviceProvider;
+        try {
+            if (StringUtils.isNumeric(extractedApplicationId)) {
+                serviceProvider = service.getApplication(Integer.valueOf(extractedApplicationId),
+                        "carbon.super", "admin  ");
+            } else {
+                // This is a file based SP
+                throw new RuntimeException("Not implemented!");
+            }
+        } catch (ApplicationManagementBridgeClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        } catch (ApplicationManagementBridgeException e) {
+            LOG.error("Failed to create a service provider.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        ApplicationDTO applicationDTO = EndpointUtils.getApplicationDTO(serviceProvider);
+        return Response.ok().entity(applicationDTO).build();
     }
 
     @Override

@@ -109,10 +109,25 @@ public class ApplicationManagementBridgeService {
      * @return service provider
      * @throws IdentityApplicationManagementException
      */
-    public ServiceProvider getApplication(String id, String tenantDomain, String username)
-            throws IdentityApplicationManagementException {
+    public ExtendedServiceProvider getApplication(int id, String tenantDomain, String username)
+            throws ApplicationManagementBridgeException {
 
-        return null;
+        try {
+            startTenantFlow(tenantDomain, username);
+
+            ServiceProvider serviceProvider;
+            try {
+                // Retrieve service provider
+                serviceProvider = ApplicationManagementBridgeServiceDataHolder.getInstance()
+                        .getApplicationManagementService().getServiceProvider(id);
+            } catch (IdentityApplicationManagementException e) {
+                throw new ApplicationManagementBridgeException("Error occurred while retrieving the application", e);
+            }
+
+            return new ExtendedServiceProvider(serviceProvider);
+        } finally {
+            endTenantFlow();
+        }
     }
 
     /**
