@@ -82,7 +82,7 @@ public class ApplicationManagementBridgeService {
      * @throws ApplicationManagementBridgeException
      */
     public List<ExtendedApplicationBasicInfo> getApplications(int offset, int limit, boolean fileBasedApps,
-                                                      String tenantDomain, String username)
+                                                              String tenantDomain, String username)
             throws ApplicationManagementBridgeException {
 
         try {
@@ -119,12 +119,32 @@ public class ApplicationManagementBridgeService {
      * @param tenantDomain    tenant domain
      * @param username        username
      * @return updated service provider
-     * @throws IdentityApplicationManagementException
+     * @throws ApplicationManagementBridgeException
      */
-    public ServiceProvider updateApplication(ServiceProvider serviceProvider, String tenantDomain, String username)
-            throws IdentityApplicationManagementException {
+    public ExtendedServiceProvider updateApplication(ServiceProvider serviceProvider, String tenantDomain,
+                                                     String username) throws ApplicationManagementBridgeException {
 
-        return null;
+        try {
+            startTenantFlow(tenantDomain, username);
+            ServiceProvider existingServiceProvider;
+            try {
+                //TODO: Need to remove this code later when all the components are implemented
+                existingServiceProvider = ApplicationManagementBridgeServiceDataHolder.getInstance()
+                        .getApplicationManagementService().getServiceProvider(serviceProvider.getApplicationID());
+
+                existingServiceProvider.setApplicationName(serviceProvider.getApplicationName());
+                existingServiceProvider.setDescription(serviceProvider.getDescription());
+                // Update service provider
+                ApplicationManagementBridgeServiceDataHolder.getInstance().getApplicationManagementService()
+                        .updateApplication(existingServiceProvider, tenantDomain, username);
+            } catch (IdentityApplicationManagementException e) {
+                throw new ApplicationManagementBridgeException("Error occurred while creating the application", e);
+            }
+
+            return new ExtendedServiceProvider(existingServiceProvider);
+        } finally {
+            endTenantFlow();
+        }
     }
 
     /**

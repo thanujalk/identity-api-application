@@ -150,7 +150,46 @@ public class ApplicationsApiServiceImpl extends ApplicationsApiService {
     @Override
     public Response applicationsApplicationIdPut(String applicationId, ApplicationDTO application) {
 
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Not implemented!")).build();
+        if(!applicationId.equals(application.getId())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Invalid application id.");
+            }
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        ServiceProvider serviceProvider;
+        try {
+            serviceProvider = EndpointUtils.getServiceProvider(application);
+        } catch (EndpointClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        }
+
+        ApplicationManagementBridgeService service;
+        try {
+            service = EndpointUtils.getApplicationManagementRESTService();
+        } catch (EndpointServerException e) {
+            LOG.error("Server error occurred.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        ExtendedServiceProvider updatedServiceProvider;
+        try {
+            updatedServiceProvider = service.updateApplication(serviceProvider, "carbon.super", "admin");
+        } catch (ApplicationManagementBridgeClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        } catch (ApplicationManagementBridgeException e) {
+            LOG.error("Failed to create a service provider.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        ApplicationDTO applicationDTO = EndpointUtils.getApplicationDTO(updatedServiceProvider);
+        return Response.ok().entity(applicationDTO).build();
     }
 
     @Override
