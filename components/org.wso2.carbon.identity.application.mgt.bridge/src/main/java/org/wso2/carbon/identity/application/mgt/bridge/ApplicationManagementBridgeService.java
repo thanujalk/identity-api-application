@@ -183,10 +183,29 @@ public class ApplicationManagementBridgeService {
      * @param id           service provider id
      * @param tenantDomain tenant domain
      * @param username     username
-     * @throws IdentityApplicationManagementException
+     * @throws ApplicationManagementBridgeClientException
      */
-    public void deleteApplication(String id, String tenantDomain, String username)
-            throws IdentityApplicationManagementException {
+    public void deleteApplication(int id, String tenantDomain, String username)
+            throws ApplicationManagementBridgeException {
+
+        try {
+            startTenantFlow(tenantDomain, username);
+
+            ServiceProvider serviceProvider;
+            try {
+                // Retrieve service provider
+                serviceProvider = ApplicationManagementBridgeServiceDataHolder.getInstance()
+                        .getApplicationManagementService().getServiceProvider(id);
+
+                ApplicationManagementBridgeServiceDataHolder.getInstance()
+                        .getApplicationManagementService().deleteApplication(serviceProvider.getApplicationName(),
+                        tenantDomain, username);
+            } catch (IdentityApplicationManagementException e) {
+                throw new ApplicationManagementBridgeException("Error occurred while retrieving the application", e);
+            }
+        } finally {
+            endTenantFlow();
+        }
 
     }
 

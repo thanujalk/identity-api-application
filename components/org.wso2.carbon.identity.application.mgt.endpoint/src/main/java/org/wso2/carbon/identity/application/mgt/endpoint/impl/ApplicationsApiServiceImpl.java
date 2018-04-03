@@ -100,7 +100,41 @@ public class ApplicationsApiServiceImpl extends ApplicationsApiService {
     @Override
     public Response applicationsApplicationIdDelete(String applicationId) {
 
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Not implemented!")).build();
+        String extractedApplicationId;
+        try {
+            extractedApplicationId = EndpointUtils.extractedApplicationId(applicationId);
+        } catch (EndpointClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        }
+
+        ApplicationManagementBridgeService service;
+        try {
+            service = EndpointUtils.getApplicationManagementRESTService();
+        } catch (EndpointServerException e) {
+            LOG.error("Server error occurred.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        if(StringUtils.isNumeric(extractedApplicationId)) {
+            try {
+                service.deleteApplication(Integer.valueOf(extractedApplicationId), "carbon.super", "admin");
+            } catch (ApplicationManagementBridgeClientException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Client error occurred.", e);
+                }
+                return EndpointUtils.getBadRequestErrorResponse(e);
+            } catch (ApplicationManagementBridgeException e) {
+                LOG.error("Failed to delete a service provider.", e);
+                return EndpointUtils.getInternalServerErrorResponse();
+            }
+        } else {
+            throw new RuntimeException("Not implemented!");
+        }
+
+        return Response.ok().build();
     }
 
     @Override
