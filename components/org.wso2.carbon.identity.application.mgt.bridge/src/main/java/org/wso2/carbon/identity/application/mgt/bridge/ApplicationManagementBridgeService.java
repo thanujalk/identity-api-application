@@ -26,9 +26,12 @@ import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
 import org.wso2.carbon.identity.application.mgt.bridge.exception.ApplicationManagementBridgeClientException;
 import org.wso2.carbon.identity.application.mgt.bridge.exception.ApplicationManagementBridgeException;
 import org.wso2.carbon.identity.application.mgt.bridge.internal.ApplicationManagementBridgeServiceDataHolder;
+import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedApplicationBasicInfo;
 import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedServiceProvider;
 import org.wso2.carbon.user.api.UserStoreException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,7 +47,7 @@ public class ApplicationManagementBridgeService {
      * @param tenantDomain    tenant domain
      * @param username        username
      * @return created service provider
-     * @throws ApplicationManagementBridgeClientException
+     * @throws ApplicationManagementBridgeException
      */
     public ExtendedServiceProvider createApplication(ServiceProvider serviceProvider, String tenantDomain,
                                                      String username) throws ApplicationManagementBridgeException {
@@ -76,13 +79,37 @@ public class ApplicationManagementBridgeService {
      * @param tenantDomain  tenant domain
      * @param username      username
      * @return updated service provider
-     * @throws IdentityApplicationManagementException
+     * @throws ApplicationManagementBridgeException
      */
-    public List<ApplicationBasicInfo> getApplications(int offset, int limit, boolean fileBasedApps,
+    public List<ExtendedApplicationBasicInfo> getApplications(int offset, int limit, boolean fileBasedApps,
                                                       String tenantDomain, String username)
-            throws IdentityApplicationManagementException {
+            throws ApplicationManagementBridgeException {
 
-        return null;
+        try {
+            startTenantFlow(tenantDomain, username);
+
+            ApplicationBasicInfo[] applicationBasicInfos;
+            try {
+                // Retrieve application basic infos
+                applicationBasicInfos = ApplicationManagementBridgeServiceDataHolder.getInstance()
+                        .getApplicationManagementService().getAllApplicationBasicInfo(tenantDomain, username);
+            } catch (IdentityApplicationManagementException e) {
+                throw new ApplicationManagementBridgeException("Error occurred while retrieving application basic " +
+                        "infos", e);
+            }
+
+            if (applicationBasicInfos == null || applicationBasicInfos.length == 0) {
+                return Collections.emptyList();
+            }
+
+            List<ExtendedApplicationBasicInfo> extendedApplicationBasicInfos = new ArrayList<>();
+            for (ApplicationBasicInfo applicationBasicInfo : applicationBasicInfos) {
+                extendedApplicationBasicInfos.add(new ExtendedApplicationBasicInfo(applicationBasicInfo));
+            }
+            return extendedApplicationBasicInfos;
+        } finally {
+            endTenantFlow();
+        }
     }
 
     /**
@@ -107,7 +134,7 @@ public class ApplicationManagementBridgeService {
      * @param tenantDomain tenant domain
      * @param username     username
      * @return service provider
-     * @throws IdentityApplicationManagementException
+     * @throws ApplicationManagementBridgeException
      */
     public ExtendedServiceProvider getApplication(int id, String tenantDomain, String username)
             throws ApplicationManagementBridgeException {

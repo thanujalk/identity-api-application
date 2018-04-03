@@ -21,8 +21,10 @@ import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.mgt.bridge.ApplicationManagementBridgeService;
+import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedApplicationBasicInfo;
 import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedServiceProvider;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.ApplicationDTO;
+import org.wso2.carbon.identity.application.mgt.endpoint.dto.ApplicationListItemDTO;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.ErrorDTO;
 import org.wso2.carbon.identity.application.mgt.endpoint.exception.EndpointClientException;
 import org.wso2.carbon.identity.application.mgt.endpoint.exception.EndpointServerException;
@@ -58,7 +60,6 @@ public class EndpointUtils {
     public static ServiceProvider getServiceProvider(ApplicationDTO applicationDTO) throws EndpointClientException {
 
         ServiceProvider serviceProvider = new ServiceProvider();
-
         serviceProvider.setApplicationName(applicationDTO.getName());
         serviceProvider.setDescription(applicationDTO.getDescription());
 
@@ -74,11 +75,19 @@ public class EndpointUtils {
     public static ApplicationDTO getApplicationDTO(ExtendedServiceProvider serviceProvider) {
 
         ApplicationDTO applicationDTO = new ApplicationDTO();
-
         applicationDTO.setName(serviceProvider.getApplicationName());
         applicationDTO.setDescription(serviceProvider.getDescription());
         applicationDTO.setId(serviceProvider.getUniqueId());
         return applicationDTO;
+    }
+
+    public static ApplicationListItemDTO getApplicationListItemDTO(ExtendedApplicationBasicInfo
+                                                                           extendedApplicationBasicInfo) {
+        ApplicationListItemDTO applicationListItemDTO = new ApplicationListItemDTO();
+        applicationListItemDTO.setId(extendedApplicationBasicInfo.getUniqueId());
+        applicationListItemDTO.setName(extendedApplicationBasicInfo.getApplicationName());
+        applicationListItemDTO.setDescription(extendedApplicationBasicInfo.getDescription());
+        return applicationListItemDTO;
     }
 
     public static int getServiceProviderId(String applicationId)

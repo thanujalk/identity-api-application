@@ -30,14 +30,13 @@ import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.model.ServiceProviderProperty;
 import org.wso2.carbon.identity.application.common.model.User;
 
+import static org.wso2.carbon.identity.application.mgt.bridge.util.Constants.UNIQUE_ID_PREFIX;
 import static org.wso2.carbon.identity.core.util.IdentityUtil.base58Encode;
 
 /**
  * Extended service provider implementation for Application REST API
  */
 public class ExtendedServiceProvider extends ServiceProvider {
-
-    private static final String UNIQUE_ID_PREFIX = "APPLICATION.";
 
     private ServiceProvider serviceProvider;
 

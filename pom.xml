@@ -119,7 +119,7 @@
 
     <properties>
         <carbon.kernel.version>4.4.23</carbon.kernel.version>
-        <carbon.identity.framework.version>5.11.156</carbon.identity.framework.version>
+        <carbon.identity.framework.version>5.11.157</carbon.identity.framework.version>
         <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
         <io.swagger.version>1.5.8</io.swagger.version>
         <cxf-bundle.version>3.1.13</cxf-bundle.version>

@@ -24,10 +24,12 @@ import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.mgt.bridge.ApplicationManagementBridgeService;
 import org.wso2.carbon.identity.application.mgt.bridge.exception.ApplicationManagementBridgeClientException;
 import org.wso2.carbon.identity.application.mgt.bridge.exception.ApplicationManagementBridgeException;
+import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedApplicationBasicInfo;
 import org.wso2.carbon.identity.application.mgt.bridge.model.ExtendedServiceProvider;
 import org.wso2.carbon.identity.application.mgt.endpoint.ApiResponseMessage;
 import org.wso2.carbon.identity.application.mgt.endpoint.ApplicationsApiService;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.ApplicationDTO;
+import org.wso2.carbon.identity.application.mgt.endpoint.dto.ApplicationListItemDTO;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.AuthenticationSequenceDTO;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.OIDCParametersDTO;
 import org.wso2.carbon.identity.application.mgt.endpoint.dto.SAML2ParametersDTO;
@@ -35,6 +37,9 @@ import org.wso2.carbon.identity.application.mgt.endpoint.exception.EndpointClien
 import org.wso2.carbon.identity.application.mgt.endpoint.exception.EndpointServerException;
 import org.wso2.carbon.identity.application.mgt.endpoint.util.EndpointUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.core.Response;
 
 public class ApplicationsApiServiceImpl extends ApplicationsApiService {
@@ -151,7 +156,37 @@ public class ApplicationsApiServiceImpl extends ApplicationsApiService {
     @Override
     public Response applicationsGet(Integer limit, Integer offset) {
 
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Not implemented!")).build();
+        ApplicationManagementBridgeService service;
+        try {
+            service = EndpointUtils.getApplicationManagementRESTService();
+        } catch (EndpointServerException e) {
+            LOG.error("Server error occurred.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        List<ExtendedApplicationBasicInfo> extendedApplicationBasicInfos;
+        try {
+            extendedApplicationBasicInfos = service.getApplications(offset, limit, false, "carbon.super", "admin");
+        } catch (ApplicationManagementBridgeClientException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client error occurred.", e);
+            }
+            return EndpointUtils.getBadRequestErrorResponse(e);
+        } catch (ApplicationManagementBridgeException e) {
+            LOG.error("Failed to retrieve list application information.", e);
+            return EndpointUtils.getInternalServerErrorResponse();
+        }
+
+        if(extendedApplicationBasicInfos.isEmpty()) {
+            return Response.ok().entity(Collections.<ApplicationListItemDTO>emptyList()).build();
+        }
+
+        List<ApplicationListItemDTO> applicationListItemDTOs = new ArrayList<>();
+        for (ExtendedApplicationBasicInfo extendedApplicationBasicInfo :  extendedApplicationBasicInfos) {
+            applicationListItemDTOs.add(EndpointUtils.getApplicationListItemDTO(extendedApplicationBasicInfo));
+        }
+
+        return Response.ok().entity(applicationListItemDTOs).build();
     }
 
     @Override
