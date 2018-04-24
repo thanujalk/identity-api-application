@@ -32,7 +32,7 @@
     </parent>
 
     <modules>
-        <module>components/org.wso2.carbon.identity.application.mgt.bridge</module>
+        <module>components/app-mgt/org.wso2.carbon.identity.application.mgt.bridge</module>
         <module>components/org.wso2.carbon.identity.application.mgt.endpoint</module>
     </modules>
 
@@ -114,12 +114,22 @@
                 <artifactId>spring-web</artifactId>
                 <version>${spring-web.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.ballerinalang</groupId>
+                <artifactId>ballerina-core</artifactId>
+                <version>${ballerina.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ballerinalang</groupId>
+                <artifactId>ballerina-lang</artifactId>
+                <version>${ballerina.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <carbon.kernel.version>4.4.23</carbon.kernel.version>
-        <carbon.identity.framework.version>5.11.157</carbon.identity.framework.version>
+        <carbon.identity.framework.version>5.11.178</carbon.identity.framework.version>
         <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
         <io.swagger.version>1.5.8</io.swagger.version>
         <cxf-bundle.version>3.1.13</cxf-bundle.version>
@@ -130,6 +140,8 @@
         <osgi.service.component.imp.pkg.version.range>[1.2.0, 2.0.0)</osgi.service.component.imp.pkg.version.range>
         <identity.api.application.package.export.version>${project.version}
         </identity.api.application.package.export.version>
+        <maven.scr.plugin.version>1.24.0</maven.scr.plugin.version>
+        <ballerina.version>0.970.0-beta4</ballerina.version>
     </properties>
 
 </project>

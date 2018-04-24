@@ -59,7 +59,7 @@ public class ApplicationManagementBridgeService {
             try {
                 // Create service provider
                 createdServiceProvider = ApplicationManagementBridgeServiceDataHolder.getInstance()
-                        .getApplicationManagementService().createApplication(serviceProvider, tenantDomain, username);
+                        .getApplicationManagementService().addApplication(serviceProvider, tenantDomain, username);
             } catch (IdentityApplicationManagementException e) {
                 throw new ApplicationManagementBridgeException("Error occurred while creating the application", e);
             }

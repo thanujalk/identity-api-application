@@ -19,6 +19,7 @@
 package org.wso2.carbon.identity.application.mgt.bridge.internal;
 
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
+//import org.wso2.carbon.identity.integration.c4b7a.BallerinaFunctionRegistration;
 import org.wso2.carbon.identity.sso.saml.SSOServiceProviderConfigManager;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -32,6 +33,8 @@ public class ApplicationManagementBridgeServiceDataHolder {
     private ApplicationManagementService applicationManagementService;
 
     private SSOServiceProviderConfigManager ssoServiceProviderConfigManager;
+
+//    private BallerinaFunctionRegistration ballerinaFunctionRegistration;
 
     private ApplicationManagementBridgeServiceDataHolder() {
 
@@ -80,4 +83,12 @@ public class ApplicationManagementBridgeServiceDataHolder {
 
         this.ssoServiceProviderConfigManager = ssoServiceProviderConfigManager;
     }
+
+//    public BallerinaFunctionRegistration getBallerinaFunctionRegistration() {
+//        return ballerinaFunctionRegistration;
+//    }
+//
+//    public void setBallerinaFunctionRegistration(BallerinaFunctionRegistration ballerinaFunctionRegistration) {
+//        this.ballerinaFunctionRegistration = ballerinaFunctionRegistration;
+//    }
 }
